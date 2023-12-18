@@ -1,0 +1,10 @@
+{
+	"name": "tf2.13.0-generic",
+	"build": { 
+		"context": "..",
+		"dockerfile": "Dockerfile"
+	},
+	"runArgs": ["--gpus","all"],
+	"remoteUser": "gmartinez"
+}
+
