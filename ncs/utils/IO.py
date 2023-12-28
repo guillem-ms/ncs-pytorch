@@ -1,23 +1,22 @@
 import os
 import numpy as np
 from struct import pack, unpack
+from typing import List, Dict
 
-"""
-Reads OBJ files
-Only handles vertices, faces and UV maps
-Input:
-- file: path to .obj file
-Outputs:
-- V: 3D vertices
-- F: 3D faces
-- Vt: UV vertices
-- Ft: UV faces
-Correspondence between mesh and UV map is implicit in F to Ft correspondences
-If no UV map data in .obj file, it shall return Vt=None and Ft=None
-"""
-
-
-def readOBJ(file):
+def readOBJ(file: str) -> List:
+    """
+    Reads OBJ files
+    Only handles vertices, faces and UV maps
+    Input:
+    - file: path to .obj file
+    Outputs:
+    - V: 3D vertices
+    - F: 3D faces
+    - Vt: UV vertices
+    - Ft: UV faces
+    Correspondence between mesh and UV map is implicit in F to Ft correspondences
+    If no UV map data in .obj file, it shall return Vt=None and Ft=None
+    """
     V, Vt, F, Ft = [], [], [], []
     with open(file, "r") as f:
         T = f.readlines()
@@ -50,21 +49,19 @@ def readOBJ(file):
     return V, F, Vt, Ft
 
 
-"""
-Writes OBJ files
-Only handles vertices, faces and UV maps
-Inputs:
-- file: path to .obj file (overwrites if exists)
-- V: 3D vertices
-- F: 3D faces
-- Vt: UV vertices
-- Ft: UV faces
-Correspondence between mesh and UV map is implicit in F to Ft correspondences
-If no UV map data as input, it will write only 3D data in .obj file
-"""
-
-
-def writeOBJ(file, V, F, Vt=None, Ft=None):
+def writeOBJ(file: str, V, F, Vt=None, Ft=None) -> None:
+    """
+    Writes OBJ files
+    Only handles vertices, faces and UV maps
+    Inputs:
+    - file: path to .obj file (overwrites if exists)
+    - V: 3D vertices
+    - F: 3D faces
+    - Vt: UV vertices
+    - Ft: UV faces
+    Correspondence between mesh and UV map is implicit in F to Ft correspondences
+    If no UV map data as input, it will write only 3D data in .obj file
+    """
     if not Vt is None:
         assert len(F) == len(
             Ft
@@ -93,19 +90,17 @@ def writeOBJ(file, V, F, Vt=None, Ft=None):
             file.write(line)
 
 
-"""
-Reads PC2 files, and proposed format PC16 files
-Inputs:
-- file: path to .pc2/.pc16 file
-- float16: False for PC2 files, True for PC16
-Output:
-- data: dictionary with .pc2/.pc16 file data
-NOTE: 16-bit floats lose precision with high values (positive or negative),
-	  we do not recommend using this format for data outside range [-2, 2]
-"""
-
-
-def readPC2(file, float16=False):
+def readPC2(file: str, float16=False) -> Dict:
+    """
+    Reads PC2 files, and proposed format PC16 files
+    Inputs:
+    - file: path to .pc2/.pc16 file
+    - float16: False for PC2 files, True for PC16
+    Output:
+    - data: dictionary with .pc2/.pc16 file data
+    NOTE: 16-bit floats lose precision with high values (positive or negative),
+        we do not recommend using this format for data outside range [-2, 2]
+    """
     assert (
         file.endswith(".pc2") and not float16 or file.endswith(".pc16") and float16
     ), "File format not consistent with specified input format"
@@ -135,18 +130,18 @@ def readPC2(file, float16=False):
     return data
 
 
-"""
-Reads an specific frame of PC2/PC16 files
-Inputs:
-- file: path to .pc2/.pc16 file
-- frame: number of the frame to read
-- float16: False for PC2 files, True for PC16
-Output:
-- T: mesh vertex data at specified frame
-"""
 
 
-def readPC2Frame(file, frame, float16=False):
+def readPC2Frame(file: str, frame, float16=False) -> np.ndarray:
+    """
+    Reads an specific frame of PC2/PC16 files
+    Inputs:
+    - file: path to .pc2/.pc16 file
+    - frame: number of the frame to read
+    - float16: False for PC2 files, True for PC16
+    Output:
+    - T: mesh vertex data at specified frame
+    """
     assert (
         file.endswith(".pc2") and not float16 or file.endswith(".pc16") and float16
     ), "File format not consistent with specified input format"
@@ -174,19 +169,18 @@ def readPC2Frame(file, frame, float16=False):
     return T.reshape(nPoints, 3)
 
 
-"""
-Writes PC2 and PC16 files
-Inputs:
-- file: path to file (overwrites if exists)
-- V: 3D animation data as a three dimensional array (N. Frames x N. Vertices x 3)
-- float16: False for writing as PC2 file, True for PC16
-This function assumes 'startFrame' to be 0 and 'sampleRate' to be 1
-NOTE: 16-bit floats lose precision with high values (positive or negative),
-	  we do not recommend using this format for data outside range [-2, 2]
-"""
 
-
-def writePC2(file, V, float16=False):
+def writePC2(file: str, V, float16=False):
+    """
+    Writes PC2 and PC16 files
+    Inputs:
+    - file: path to file (overwrites if exists)
+    - V: 3D animation data as a three dimensional array (N. Frames x N. Vertices x 3)
+    - float16: False for writing as PC2 file, True for PC16
+    This function assumes 'startFrame' to be 0 and 'sampleRate' to be 1
+    NOTE: 16-bit floats lose precision with high values (positive or negative),
+        we do not recommend using this format for data outside range [-2, 2]
+    """
     assert (
         file.endswith(".pc2") and not float16 or file.endswith(".pc16") and float16
     ), "File format not consistent with specified input format"
@@ -205,19 +199,17 @@ def writePC2(file, V, float16=False):
         f.write(V.tobytes())
 
 
-"""
-Appends frames to PC2 and PC16 files
-Inputs:
-- file: path to file
-- V: 3D animation data as a three dimensional array (N. New Frames x N. Vertices x 3)
-- float16: False for writing as PC2 file, True for PC16
-This function assumes 'startFrame' to be 0 and 'sampleRate' to be 1
-NOTE: 16-bit floats lose precision with high values (positive or negative),
-	  we do not recommend using this format for data outside range [-2, 2]
-"""
-
-
-def writePC2Frames(file, V, float16=False):
+def writePC2Frames(file: str, V, float16=False) -> None:
+    """
+    Appends frames to PC2 and PC16 files
+    Inputs:
+    - file: path to file
+    - V: 3D animation data as a three dimensional array (N. New Frames x N. Vertices x 3)
+    - float16: False for writing as PC2 file, True for PC16
+    This function assumes 'startFrame' to be 0 and 'sampleRate' to be 1
+    NOTE: 16-bit floats lose precision with high values (positive or negative),
+        we do not recommend using this format for data outside range [-2, 2]
+    """
     assert (
         file.endswith(".pc2") and not float16 or file.endswith(".pc16") and float16
     ), "File format not consistent with specified input format"
