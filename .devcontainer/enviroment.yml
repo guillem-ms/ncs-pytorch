@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 name: ncs-py
+=======
+1name: ncs-py
+>>>>>>> e97a3b5e655d2708909ca0f774efa67c46f97bd6
 channels:
   - pytorch3d
   - pyg
