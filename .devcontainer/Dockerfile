@@ -25,7 +25,7 @@ RUN . /home/$USERNAME/miniconda3/etc/profile.d/conda.sh \
     && conda env create -f /home/$USERNAME/enviroment.yml 
 
 # Set the Conda environment to activate on run
-RUN echo "source activate pytorch" > /home/$USERNAME/.bashrc
+RUN echo "source activate ncs-py" > /home/$USERNAME/.bashrc
 
 # Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME

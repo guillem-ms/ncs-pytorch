@@ -1,4 +1,4 @@
-name: ncs-py
+name: 
 channels:
   - pytorch3d
   - pyg
