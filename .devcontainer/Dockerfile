@@ -19,7 +19,7 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
 # Set up the Conda environment
 ENV PATH /home/$USERNAME/miniconda3/bin:$PATH
 
-COPY enviroment.yml /home/$USERNAME/enviroment.yml
+COPY .devcontainer/enviroment.yml /home/$USERNAME/enviroment.yml
 
 RUN . /home/$USERNAME/miniconda3/etc/profile.d/conda.sh \
     && conda env create -f /home/$USERNAME/enviroment.yml 
