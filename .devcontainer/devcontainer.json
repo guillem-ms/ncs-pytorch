@@ -4,6 +4,11 @@
 		"context": "..",
 		"dockerfile": "Dockerfile"
 	},
-	"runArgs": ["--gpus","all"]
+	"runArgs": ["--gpus","all"],
+	"remoteUser": "gmartinez",
+	"containerUser": "gmartinez",
+	"updateRemoteUserUID": true,
+	"workspaceMount":"source=${localWorkspaceFolder},target=/home/gmartinez/ncs-py,type=bind",
+	"workspaceFolder": "/home/gmartinez/ncs-py"
 }
 

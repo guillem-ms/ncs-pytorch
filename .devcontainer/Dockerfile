@@ -1,23 +1,31 @@
-FROM python:3.10
+FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-devel
+
+ARG USERNAME="gmartinez"
+ARG USER_UID=1001
+ARG USER_GID=$USER_UID
+
+# Create the user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
 
 # apt and apt-get update
 RUN apt-get update && apt-get install -y nano git unzip wget && apt-get clean
 
 # Download and install Miniconda
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-    && bash Miniconda3-latest-Linux-x86_64.sh -b -p /root/miniconda3 \
+    && bash Miniconda3-latest-Linux-x86_64.sh -b -p /home/$USERNAME/miniconda3 \
     && rm -f Miniconda3-latest-Linux-x86_64.sh
 
 # Set up the Conda environment
-ENV PATH /root/miniconda3/bin:$PATH
+ENV PATH /home/$USERNAME/miniconda3/bin:$PATH
 
-RUN . /root/miniconda3/etc/profile.d/conda.sh \
-    && conda env create -f enviroment.yml 
+COPY enviroment.yml /home/$USERNAME/enviroment.yml
+
+RUN . /home/$USERNAME/miniconda3/etc/profile.d/conda.sh \
+    && conda env create -f /home/$USERNAME/enviroment.yml 
 
 # Set the Conda environment to activate on run
-RUN echo "source activate main" > /root/.bashrc
+RUN echo "source activate pytorch" > /home/$USERNAME/.bashrc
 
-ENV PROJECT_PATH=/root/ncs-py
-RUN mkdir $PROJECT_PATH
-WORKDIR $PROJECT_PATH
-
+# Set the default user. Omit if you want to keep the default as root.
+USER $USERNAME
