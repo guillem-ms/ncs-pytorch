@@ -13,3 +13,7 @@ class MyMetric:
     def result(self):
         return self.error / self.count if self.count != 0 else torch.tensor(0.0)
 
+    def reset(self):
+        self.error = torch.tensor(0.0)
+        self.count = torch.tensor(0.0)
+
