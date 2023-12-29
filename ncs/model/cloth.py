@@ -16,7 +16,7 @@ from utils.mesh import (
 
 
 class Garment:
-    def __init__(self, obj):
+    def __init__(self, obj: str):
         if not obj.endswith(".obj"):
             obj += ".obj"
         self.obj = obj
@@ -58,7 +58,7 @@ class Garment:
         return self.vertices.shape[0]
 
     @property
-    def pinning(self):
+    def pinning(self) -> bool:
         return hasattr(self, "pinning_vertices")
 
     def transfer_blend_weights(self, body):
@@ -67,12 +67,12 @@ class Garment:
         self.blend_weights = body.blend_weights[idx][:, body.input_joints]
         self.blend_weights /= self.blend_weights.sum(1, keepdims=True)
 
-    def smooth_blend_weights(self, iterations=50):
+    def smooth_blend_weights(self, iterations: int = 50) -> None:
         for _ in range(iterations):
             self.blend_weights = self.laplacian @ self.blend_weights
         self.blend_weights = self.blend_weights.astype(np.float32)
 
-    def make_continuum(self):
+    def make_continuum(self) -> None:
         angle = np.arccos(self.normals[:, 2])
         axis = np.stack(
             [
